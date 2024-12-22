@@ -1,0 +1,52 @@
+-- Создание базы данных
+CREATE DATABASE exam_preparation;
+-- Подключение к базе данных
+\c exam_preparation;
+-- Таблица студентов (Hub)
+CREATE TABLE Hub_Students (
+    student_id SERIAL PRIMARY KEY
+);
+-- Таблица предметов (Hub)
+CREATE TABLE Hub_Subjects (
+    subject_id SERIAL PRIMARY KEY
+);
+-- Таблица экзаменов (Hub)
+CREATE TABLE Hub_Exams (
+    exam_id SERIAL PRIMARY KEY
+);
+-- Связь между студентами и экзаменами (Link)
+CREATE TABLE Link_Student_Exam (
+    student_id INT REFERENCES Hub_Students(student_id) ON DELETE CASCADE,
+    exam_id INT REFERENCES Hub_Exams(exam_id) ON DELETE CASCADE,
+    PRIMARY KEY (student_id, exam_id)
+);
+-- Атрибуты студентов (Attributes)
+CREATE TABLE Attr_Students (
+    student_id INT REFERENCES Hub_Students(student_id) ON DELETE CASCADE,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    PRIMARY KEY (student_id)
+);
+
+-- Атрибуты предметов (Attributes)
+CREATE TABLE Attr_Subjects (
+    subject_id INT REFERENCES Hub_Subjects(subject_id) ON DELETE CASCADE,
+    subject_name VARCHAR(100) NOT NULL,
+    credits INT NOT NULL,
+    PRIMARY KEY (subject_id)
+);
+-- Атрибуты экзаменов (Attributes)
+CREATE TABLE Attr_Exams (
+    exam_id INT REFERENCES Hub_Exams(exam_id) ON DELETE CASCADE,
+    exam_date DATE NOT NULL,
+    exam_time TIME NOT NULL,
+    PRIMARY KEY (exam_id)
+);
+-- Атрибуты оценок (Attributes)
+CREATE TABLE Attr_Grades (
+    student_id INT REFERENCES Hub_Students(student_id) ON DELETE CASCADE,
+    exam_id INT REFERENCES Hub_Exams(exam_id) ON DELETE CASCADE,
+    grade CHAR(2) CHECK (grade IN ('A', 'B', 'C', 'D', 'F')),
+    PRIMARY KEY (student_id, exam_id)
+);
